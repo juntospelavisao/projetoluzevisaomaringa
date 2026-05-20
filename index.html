@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Projeto Luz e Visão Maringá</title>
+    
+    <!-- Metadados -->
+    <meta property="og:title" content="Cadastro - Projeto Luz e Visão Maringá">
+    <meta property="og:description" content="Agendamento gratuito para atendimento oftalmológico. Vagas limitadas para 26 e 27 de Junho!">
+    <meta name="theme-color" content="#0d6efd">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #0d6efd; --primary-dark: #0a58ca;
+            --bg: #f8f9fa; --surface: #ffffff;
+            --text-main: #212529; --text-muted: #6c757d;
+            --error: #dc3545; --success: #198754;
+            --border-radius: 12px;
+        }
+
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: var(--text-main); display: flex; justify-content: center; padding: 20px; margin: 0; min-height: 100vh; }
+
+        .container { background-color: var(--surface); width: 100%; max-width: 640px; padding: 2.5rem; border-radius: var(--border-radius); box-shadow: 0 10px 30px rgba(0,0,0,0.05); animation: slideIn 0.5s ease; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Cabeçalho */
+        .header { text-align: center; margin-bottom: 2rem; }
+        .logo-placeholder { width: 80px; height: 80px; background: #e9ecef; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-muted); font-size: 2rem; margin: 0 auto 1rem; }
+        
+        h2 { margin: 0; color: var(--primary); font-weight: 700; font-size: 1.5rem; }
+        .subtitle { color: var(--text-muted); font-size: 1rem; margin-top: 8px; font-weight: 700; text-transform: uppercase; line-height: 1.4; }
+
+        h3 { font-size: 1.1rem; color: var(--text-main); margin-top: 2rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f1f3f5; }
+
+        /* Formulario */
+        .row { display: flex; gap: 20px; } .col { flex: 1; }
+        .form-group { margin-bottom: 1.2rem; position: relative; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #495057; }
+        
+        input:not([type="checkbox"]), select { width: 100%; padding: 14px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 1rem; transition: all 0.2s; font-family: inherit; }
+        input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
+        input[readonly] { background-color: #f8f9fa; color: var(--text-muted); cursor: not-allowed; }
+
+        /* Cards Agendamento */
+        .agenda-option { border: 2px solid #e9ecef; border-radius: var(--border-radius); padding: 15px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; position: relative; }
+        .agenda-option:hover { border-color: #cbd3da; background: #f8f9fa; }
+        .agenda-option.selected { border-color: var(--primary); background-color: #f0f7ff; }
+        .agenda-option input { width: auto; margin-right: 15px; accent-color: var(--primary); transform: scale(1.2); }
+        .agenda-date { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
+        .vagas { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 5px; }
+
+        /* Termos */
+        .terms-wrapper { background-color: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-top: 15px; display: flex; gap: 12px; align-items: flex-start; }
+        .terms-wrapper input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+        .terms-text { font-size: 0.85rem; color: #495057; line-height: 1.4; }
+
+        /* Botão */
+        button#btnEnviar { width: 100%; padding: 16px; background-color: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; margin-top: 25px; font-weight: 700; transition: all 0.2s; box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2); }
+        button#btnEnviar:hover { background-color: var(--primary-dark); transform: translateY(-1px); }
+        button#btnEnviar:disabled { background-color: #b0c4de; cursor: not-allowed; }
+
+        /* Rodapé Segurança */
+        .security-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef; text-align: center; color: #6c757d; font-size: 0.85rem; }
+        .security-footer .safe-badge { color: #198754; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+
+        .spinner-sm { width: 12px; height: 12px; border: 2px solid #ccc; border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-msg { color: var(--error); font-size: 0.8rem; margin-top: 5px; display: none; font-weight: 600; }
+        
+        @media (max-width: 500px) { .row { flex-direction: column; gap: 0; } .container { padding: 1.5rem; } }
+        
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 30px; border-radius: 16px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="logo-placeholder">👁️</div>
+        <h2>Ficha de Cadastro</h2>
+        <div class="subtitle">PROJETO LUZ E VISÃO<br>MARINGÁ - PR 2026</div>
+    </div>
+    
+    <form name="submit-to-google-sheet" id="formCadastro" autocomplete="off">
+        <h3>Dados do Paciente</h3>
+        <div class="form-group"><label>Nome Completo *</label><input type="text" name="nome" id="nome" placeholder="Digite seu nome" required></div>
+        
+        <div class="row">
+            <div class="col form-group">
+                <label>CPF *</label>
+                <input type="text" name="cpf" id="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                <div id="cpfError" class="error-msg">Este CPF já está cadastrado!</div>
+            </div>
+            <div class="col form-group">
+                <label>WhatsApp *</label>
+                <input type="tel" name="whatsapp" id="whatsapp" placeholder="(00) 00000-0000" maxlength="15" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col form-group"><label>Data de Nascimento *</label><input type="date" name="nascimento" id="nascimento" required><div id="msgIdade" class="error-msg"></div></div>
+            <div class="col form-group" style="max-width: 100px;"><label>Idade</label><input type="text" name="idade" id="idade" readonly style="text-align: center; font-weight: bold;"></div>
+        </div>
+
+        <h3>Escolha o Dia e Período</h3>
+        <p id="status-vagas" style="color: var(--primary); font-size: 0.9rem;"><span class="spinner-sm"></span> Verificando disponibilidade de vagas...</p>
+
+        <!-- SEXTA (Limites: 135) -->
+        <label class="agenda-option" id="opt-1" onclick="selectOption('1')">
+            <input type="radio" name="agendamento" value="Sexta 26/06 - Manhã" required>
+            <div class="agenda-content">
+                <div class="agenda-date">Sexta-feira 26/06 - Manhã</div>
+                <div class="vagas" id="vagas-1">Chegada ATÉ 08:30 • <span class="spinner-sm"></span></div>
+            </div>
+        </label>
+        
+        <label class="agenda-option" id="opt-2" onclick="selectOption('2')">
+            <input type="radio" name="agendamento" value="Sexta 26/06 - Tarde">
+            <div class="agenda-content">
+                <div class="agenda-date">Sexta-feira 26/06 - Tarde</div>
+                <div class="vagas" id="vagas-2">Chegada ATÉ 14:30 • <span class="spinner-sm"></span></div>
+            </div>
+        </label>
+
+        <!-- SÁBADO (Limites: 140) -->
+        <label class="agenda-option" id="opt-3" onclick="selectOption('3')">
+            <input type="radio" name="agendamento" value="Sábado 27/06 - Manhã">
+            <div class="agenda-content">
+                <div class="agenda-date">Sábado 27/06 - Manhã</div>
+                <div class="vagas" id="vagas-3">Chegada ATÉ 08:30 • <span class="spinner-sm"></span></div>
+            </div>
+        </label>
+
+        <label class="agenda-option" id="opt-4" onclick="selectOption('4')">
+            <input type="radio" name="agendamento" value="Sábado 27/06 - Tarde">
+            <div class="agenda-content">
+                <div class="agenda-date">Sábado 27/06 - Tarde</div>
+                <div class="vagas" id="vagas-4">Chegada ATÉ 14:30 • <span class="spinner-sm"></span></div>
+            </div>
+        </label>
+       
+        <label class="terms-wrapper">
+            <input type="checkbox" name="termos" required>
+            <span class="terms-text">Declaro ter 18 anos ou mais e autorizo o contato via WhatsApp para confirmar meu agendamento.</span>
+        </label>
+
+        <button type="submit" id="btnEnviar">Confirmar Agendamento Gratuito</button>
+
+        <div class="security-footer">
+            <div class="safe-badge">🔒 Seus dados estão 100% seguros</div>
+            <p>Respeitamos a Lei Geral de Proteção de Dados (LGPD). Suas informações são criptografadas e usadas apenas para esta ação de saúde.</p>
+        </div>
+    </form>
+</div>
+
+<!-- MODAL SUCESSO -->
+<div id="modalSucesso" class="modal-overlay">
+    <div class="modal-content">
+        <div style="background: var(--success); width: 60px; height: 60px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 20px;">✓</div>
+        <h2>Agendamento Realizado!</h2>
+        <p style="color:#666; margin-bottom: 25px;">Sua vaga em Maringá foi garantida.<br>Fique atento ao seu WhatsApp.</p>
+        <button onclick="window.location.reload()" style="background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold;">Fazer Novo Cadastro</button>
+    </div>
+</div>
+
+<script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbyAUjBHlG1PdFViaqTKr_yeEB2V569umYqkqb07jjoWyDDJlFT1fC5z1vCyXGkuVcjuug/exec'; 
+    
+    const limites = {
+        'Sexta 26/06 - Manhã': 135,
+        'Sexta 26/06 - Tarde': 135,
+        'Sábado 27/06 - Manhã': 140,
+        'Sábado 27/06 - Tarde': 140
+    };
+
+    const form = document.forms['submit-to-google-sheet'];
+    const btn = document.getElementById('btnEnviar');
+
+    // Máscara de Telefone (Formatação em tempo real)
+    document.getElementById('whatsapp').addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length > 11) v = v.slice(0, 11);
+        if (v.length > 10) {
+            v = v.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+        } else if (v.length > 5) {
+            v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/, "($1) $2-$3");
+        } else if (v.length > 2) {
+            v = v.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
+        } else {
+            v = v.replace(/^(\d*)/, "($1");
+        }
+        e.target.value = v;
+    });
+
+    // Máscara de CPF
+    document.getElementById('cpf').addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g, '');
+        v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+        e.target.value = v;
+    });
+
+    // Validação de Idade (Mínimo 18 anos)
+    document.getElementById('nascimento').addEventListener('change', function() {
+        const nasc = new Date(this.value);
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - nasc.getFullYear();
+        if (hoje.getMonth() < nasc.getMonth() || (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate())) idade--;
+        
+        document.getElementById('idade').value = idade;
+        if(idade < 18) {
+            document.getElementById('msgIdade').innerText = "🚫 Apenas para maiores de 18 anos.";
+            document.getElementById('msgIdade').style.display = "block";
+            btn.disabled = true;
+        } else {
+            document.getElementById('msgIdade').style.display = "none";
+            btn.disabled = false;
+        }
+    });
+
+    window.selectOption = function(id) {
+        document.querySelectorAll('.agenda-option').forEach(el => el.classList.remove('selected'));
+        const opt = document.getElementById(`opt-${id}`);
+        if (!opt.querySelector('input').disabled) opt.classList.add('selected');
+    }
+
+    // Carregar Vagas Dinamicamente
+    window.addEventListener('load', () => {
+        fetch(scriptURL).then(res => res.json()).then(data => {
+            document.getElementById('status-vagas').style.display = 'none';
+            const opcoesData = [
+                { id: '1', key: 'Sexta 26/06 - Manhã', desc: 'Chegada ATÉ 08:30' },
+                { id: '2', key: 'Sexta 26/06 - Tarde', desc: 'Chegada ATÉ 14:30' },
+                { id: '3', key: 'Sábado 27/06 - Manhã', desc: 'Chegada ATÉ 08:30' },
+                { id: '4', key: 'Sábado 27/06 - Tarde', desc: 'Chegada ATÉ 14:30' }
+            ];
+
+            opcoesData.forEach(p => {
+                const ocupadas = data[p.key] || 0;
+                const restam = limites[p.key] - ocupadas;
+                const txtVagas = document.getElementById(`vagas-${p.id}`);
+                const card = document.getElementById(`opt-${p.id}`);
+
+                if(restam <= 0) {
+                    txtVagas.innerHTML = `${p.desc} • <b style="color:red">ESGOTADO</b>`;
+                    card.querySelector('input').disabled = true;
+                    card.style.opacity = '0.5';
+                } else {
+                    txtVagas.innerHTML = `${p.desc} • <b style="color:var(--success)">${restam} vagas</b>`;
+                }
+            });
+        }).catch(() => {
+            document.getElementById('status-vagas').innerHTML = "⚠️ Erro ao carregar disponibilidade.";
+            document.querySelectorAll('.vagas .spinner-sm').forEach(s => s.remove());
+        });
+    });
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-sm" style="border-top-color: white;"></span> Gravando...';
+
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+        .then(r => r.json())
+        .then(res => {
+            if (res.result === 'success') {
+                document.getElementById('modalSucesso').style.display = 'flex';
+            } else {
+                alert("Erro: Este CPF já possui um agendamento.");
+                btn.disabled = false;
+                btn.innerText = "Confirmar Agendamento Gratuito";
+            }
+        }).catch(() => {
+            alert("Erro de conexão. Tente novamente.");
+            btn.disabled = false;
+        });
+    });
+</script>
+
+</body>
+</html>
