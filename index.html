@@ -55,7 +55,7 @@
         .agenda-option:hover { border-color: #cbd3da; background: #f8f9fa; }
         .agenda-option.selected { border-color: var(--primary); background-color: #f0f7ff; }
         .agenda-option input { width: auto; margin-right: 15px; accent-color: var(--primary); transform: scale(1.2); }
-        .agenda-date { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
+        .agenda-date { font-weight: 700; color: var(--text-main); font-size: 1rem; }
         .vagas { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; gap: 5px; }
 
         /* Termos */
@@ -124,10 +124,10 @@
         <h3>Contato</h3>
         <div class="form-group"><label>Celular / WhatsApp *</label><input type="tel" name="whatsapp" id="whatsapp" placeholder="(00) 00000-0000" maxlength="15" required></div>
 
-        <h3>Escolha o Dia e Período (Junho/2026)</h3>
+        <h3>Escolha o Dia e Período</h3>
         <p id="status-vagas" style="color: var(--primary); font-size: 0.9rem; display: flex; align-items: center; gap: 5px;"><span class="spinner-sm"></span> Verificando disponibilidade de vagas...</p>
 
-        <!-- SEXTA 26/06 (Limite 135 por período) -->
+        <!-- SEXTA 26/06 -->
         <label class="agenda-option" id="opt-1" onclick="selectOption('1')">
             <input type="radio" name="agendamento" value="Sexta 26/06 - Manhã" required>
             <div class="agenda-content">
@@ -144,7 +144,7 @@
             </div>
         </label>
 
-        <!-- SÁBADO 27/06 (Limite 140 por período) -->
+        <!-- SÁBADO 27/06 -->
         <label class="agenda-option" id="opt-3" onclick="selectOption('3')">
             <input type="radio" name="agendamento" value="Sábado 27/06 - Manhã">
             <div class="agenda-content">
@@ -165,7 +165,7 @@
         <label class="terms-wrapper">
             <input type="checkbox" name="termos" required>
             <span class="terms-text">
-                Declaro que tenho 18 anos ou mais e autorizo o contato da equipe via <strong>WhatsApp</strong> para confirmação do agendamento.
+                Declaro que tenho 18 anos ou mais e concordo em receber o contato da equipe via <strong>WhatsApp</strong> para confirmação do agendamento.
             </span>
         </label>
 
@@ -179,9 +179,9 @@
         <!-- AVISO DE SEGURANÇA -->
         <div class="security-footer">
             <div class="safe-badge">
-                🔒 Ambiente Seguro (LGPD)
+                🔒 Ambiente Seguro
             </div>
-            <p>Seus dados são protegidos e usados exclusivamente para este atendimento de saúde em Maringá.</p>
+            <p>Seus dados são protegidos pela LGPD e usados exclusivamente para este atendimento.</p>
             <div class="copyright">Projeto Luz e Visão &copy; 2026</div>
         </div>
 
@@ -193,7 +193,7 @@
     <div class="modal-content">
         <div style="background: var(--success); width: 80px; height: 80px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px;">✓</div>
         <h2 style="color:#333; margin:0 0 10px 0;">Agendado com Sucesso!</h2>
-        <p style="color:#666; margin-bottom: 25px; line-height: 1.5;">Sua vaga em <strong>Maringá</strong> foi reservada.<br>Fique atento ao seu WhatsApp.</p>
+        <p style="color:#666; margin-bottom: 25px; line-height: 1.5;">Sua vaga para o atendimento em <strong>Maringá</strong> está reservada.<br>Aguarde nosso contato via WhatsApp.</p>
         
         <a id="btnAgenda" href="#" target="_blank" style="display: block; margin: 0 auto 15px; text-decoration: none; color: var(--primary); font-weight: bold; border: 1px solid var(--primary); padding: 10px; border-radius: 8px; width: 100%;">
             📅 Salvar na Agenda
@@ -205,11 +205,11 @@
 
 <script>
     // =========================================================================
-    // ⚠️ LINK DO GOOGLE APPS SCRIPT:
+    // ⚠️ COLE SEU LINK DO GOOGLE APPS SCRIPT AQUI:
     const scriptURL = 'https://script.google.com/macros/s/AKfycbyAUjBHlG1PdFViaqTKr_yeEB2V569umYqkqb07jjoWyDDJlFT1fC5z1vCyXGkuVcjuug/exec'; 
     // =========================================================================
 
-    // Limites de vagas conforme solicitado
+    // Limites conforme solicitação (Sexta 270 total / Sábado 280 total)
     const limitesVagas = {
         'Sexta 26/06 - Manhã': 135,
         'Sexta 26/06 - Tarde': 135,
@@ -245,11 +245,16 @@
     const dateInput = document.getElementById('nascimento');
     const today = new Date(); dateInput.max = today.toISOString().split("T")[0];
 
-    // MÁSCARA DE WHATSAPP (CORRIGIDA COM ESPAÇAMENTO)
+    // MÁSCARAS
+    document.getElementById('cpf').addEventListener('input', function(e) {
+        let v = e.target.value.replace(/\D/g, ''); 
+        e.target.value = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+        this.classList.remove('input-error'); document.getElementById('cpfError').style.display='none';
+    });
+
     document.getElementById('whatsapp').addEventListener('input', function(e) {
         let v = e.target.value.replace(/\D/g, ''); 
         if (v.length > 11) v = v.slice(0, 11);
-        
         if (v.length > 10) {
             v = v.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
         } else if (v.length > 6) {
@@ -260,13 +265,6 @@
             v = v.replace(/^(\d*)/, "($1");
         }
         e.target.value = v;
-    });
-
-    // MÁSCARA DE CPF
-    document.getElementById('cpf').addEventListener('input', function(e) {
-        let v = e.target.value.replace(/\D/g, ''); 
-        e.target.value = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-        this.classList.remove('input-error'); document.getElementById('cpfError').style.display='none';
     });
 
     // CÁLCULO DE IDADE (Mínimo 18 anos)
@@ -287,41 +285,40 @@
         }
     });
 
-    // CARREGAR VAGAS DINAMICAMENTE
+    // CARREGAR VAGAS
     window.addEventListener('load', () => {
         fetch(scriptURL).then(res => res.json()).then(data => {
             document.getElementById('status-vagas').style.display = 'none';
             
-            const listaOpcoes = [
-                { id: '1', key: 'Sexta 26/06 - Manhã', desc: 'Chegada ATÉ 08:30' },
-                { id: '2', key: 'Sexta 26/06 - Tarde', desc: 'Chegada ATÉ 14:30' },
-                { id: '3', key: 'Sábado 27/06 - Manhã', desc: 'Chegada ATÉ 08:30' },
-                { id: '4', key: 'Sábado 27/06 - Tarde', desc: 'Chegada ATÉ 14:30' }
+            const opcoesConf = [
+                { id: '1', val: 'Sexta 26/06 - Manhã', desc: 'Chegada ATÉ 08:30' }, 
+                { id: '2', val: 'Sexta 26/06 - Tarde', desc: 'Chegada ATÉ 14:30' },
+                { id: '3', val: 'Sábado 27/06 - Manhã', desc: 'Chegada ATÉ 08:30' }, 
+                { id: '4', val: 'Sábado 27/06 - Tarde', desc: 'Chegada ATÉ 14:30' }
             ];
 
-            listaOpcoes.forEach(op => {
-                const ocupadas = data[op.key] || 0;
-                const limite = limitesVagas[op.key];
-                const restam = limite - ocupadas;
-                const txt = document.getElementById(`vagas-${op.id}`);
-                const card = document.getElementById(`opt-${op.id}`);
+            opcoesConf.forEach(op => {
+                const ocup = data[op.val] || 0; 
+                const rest = limitesVagas[op.val] - ocup;
+                const txt = document.getElementById(`vagas-${op.id}`); 
+                const card = document.getElementById(`opt-${op.id}`); 
                 const radio = card.querySelector('input');
-
-                if(restam <= 0) {
-                    txt.innerHTML = `${op.desc} • <b style="color:red">ESGOTADO</b>`;
+                
+                if(rest <= 0) {
+                    txt.innerHTML = `${op.desc} • <b style="color:red;">ESGOTADO</b>`;
                     radio.disabled = true; card.style.opacity = "0.5"; card.style.cursor = "not-allowed";
                 } else {
-                    const cor = restam > 20 ? '#198754' : '#fd7e14';
-                    txt.innerHTML = `${op.desc} • <b style="color:${cor}">${restam} vagas</b>`;
+                    const cor = rest > 20 ? '#198754' : '#fd7e14';
+                    txt.innerHTML = `<span>${op.desc}</span> • <span style="color:${cor}; font-weight:bold;">${rest} vagas</span>`;
                 }
             });
-        }).catch(() => {
-            document.getElementById('status-vagas').innerHTML = "⚠️ Erro ao carregar vagas.";
+        }).catch(() => { 
+            document.getElementById('status-vagas').innerHTML = "⚠️ Erro ao carregar vagas."; 
             document.querySelectorAll('.vagas .spinner-sm').forEach(s => s.remove());
         });
     });
 
-    // ENVIO DO FORMULÁRIO
+    // ENVIO
     form.addEventListener('submit', e => {
         e.preventDefault();
         if (document.getElementById('honeypot').value !== "") return;
@@ -335,21 +332,21 @@
                 document.getElementById('cpfError').style.display = 'block';
                 btn.disabled = false; btn.innerHTML = "Confirmar Agendamento";
             } else if (res.result === 'success') {
-                // Configurar Link da Agenda
+                // Link Agenda Google
                 const opSel = document.querySelector('input[name="agendamento"]:checked').value;
                 let dataEvento = opSel.includes('26/06') ? '20260626' : '20260627';
                 let hI = opSel.includes('Manhã') ? '080000' : '133000';
                 let hF = opSel.includes('Manhã') ? '120000' : '173000';
                 
-                const tit = encodeURIComponent("Oftalmologista - Projeto Luz e Visão Maringá");
-                const linkG = `https://www.google.com/calendar/render?action=TEMPLATE&text=${tit}&dates=${dataEvento}T${hI}/${dataEvento}T${hF}&details=Local de atendimento em Maringá. Favor levar documentos.`;
+                const tit = encodeURIComponent("Projeto Luz e Visão - Maringá");
+                const linkG = `https://www.google.com/calendar/render?action=TEMPLATE&text=${tit}&dates=${dataEvento}T${hI}/${dataEvento}T${hF}&details=Favor+levar+documentos+pessoais.`;
                 document.getElementById('btnAgenda').href = linkG;
-                
                 document.getElementById('modalSucesso').style.display = 'flex';
             }
-        }).catch(() => { 
+        }).catch(err => { 
             showToast("Erro de conexão. Tente novamente."); 
-            btn.disabled = false; btn.innerHTML = "Confirmar Agendamento"; 
+            btn.disabled = false; 
+            btn.innerHTML = "Confirmar Agendamento"; 
         });
     });
 </script>
