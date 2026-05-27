@@ -9,7 +9,6 @@
     <meta property="og:title" content="Cadastro - Projeto Luz e Visão Maringá">
     <meta property="og:description" content="Agendamento gratuito para atendimento oftalmológico em Maringá. Vagas limitadas para 25, 26 e 27 de Junho!">
     <meta name="theme-color" content="#0d6efd">
-    <link rel="shortcut icon" href="logo.png" type="image/png">
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     
@@ -28,16 +27,19 @@
         .container { background-color: var(--surface); width: 100%; max-width: 640px; padding: 2.5rem; border-radius: var(--border-radius); box-shadow: 0 10px 30px rgba(0,0,0,0.05); animation: slideIn 0.5s ease; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Cabeçalho */
         .header { text-align: center; margin-bottom: 2rem; }
-        .logo-placeholder { width: 80px; height: 80px; background: #e9ecef; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-muted); font-size: 2rem; margin-bottom: 1rem; }
+        .logo-img { max-width: 120px; height: auto; margin: 0 auto 1rem; display: block; }
+        .logo-placeholder { width: 80px; height: 80px; background: #e9ecef; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-muted); font-size: 2.5rem; margin: 0 auto 1rem; }
         
         h2 { margin: 0; color: var(--primary); font-weight: 700; font-size: 1.5rem; }
         .subtitle { color: var(--text-muted); font-size: 1.1rem; margin-top: 8px; font-weight: 700; text-transform: uppercase; line-height: 1.4; }
         
-        .address-box { background: #eef2f7; border-radius: 8px; padding: 12px; margin-top: 15px; font-size: 0.85rem; color: #444; border-left: 4px solid var(--primary); }
+        .address-box { background: #eef2f7; border-radius: 8px; padding: 12px; margin-top: 15px; font-size: 0.85rem; color: #444; border-left: 4px solid var(--primary); text-align: left; }
 
         h3 { font-size: 1.1rem; color: var(--text-main); margin-top: 2rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f1f3f5; }
 
+        /* Formulario */
         .row { display: flex; gap: 20px; } .col { flex: 1; }
         .form-group { margin-bottom: 1.2rem; position: relative; }
         label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #495057; }
@@ -48,7 +50,7 @@
         
         .error-msg { color: var(--error); font-size: 0.8rem; margin-top: 5px; display: none; font-weight: 600; }
 
-        /* Agendamento */
+        /* Agenda Grid */
         .agenda-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
         .agenda-option { border: 2px solid #e9ecef; border-radius: var(--border-radius); padding: 12px; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: flex-start; position: relative; }
         .agenda-option:hover { border-color: #cbd3da; background: #f8f9fa; }
@@ -83,7 +85,10 @@
 
 <div class="container">
     <div class="header">
-        <div class="logo-placeholder">👁️</div>
+        <!-- Logo com fallback automático -->
+        <img src="logo.png" alt="Logo" class="logo-img" id="main-logo" onerror="this.style.display='none'; document.getElementById('placeholder-logo').style.display='inline-flex'">
+        <div id="placeholder-logo" class="logo-placeholder" style="display:none">👁️</div>
+        
         <h2>Ficha de Cadastro</h2>
         <div class="subtitle">PROJETO LUZ E VISÃO <br> MARINGÁ - PR 2026</div>
         
@@ -99,8 +104,8 @@
         
         <div class="row">
             <div class="col form-group">
-                <label>CPF *</label>
-                <input type="text" name="cpf" id="cpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric" required>
+                <label>CPF (Opcional)</label>
+                <input type="text" name="cpf" id="cpf" placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
                 <div id="cpfError" class="error-msg">CPF já cadastrado!</div>
             </div>
             <div class="col form-group"><label>WhatsApp *</label><input type="tel" name="whatsapp" id="whatsapp" placeholder="(00) 00000-0000" maxlength="15" required></div>
@@ -112,7 +117,7 @@
         </div>
 
         <h3>Escolha o Dia e Período</h3>
-        <p id="status-vagas" style="color: var(--primary); font-size: 0.9rem; display: flex; align-items: center; gap: 5px;"><span class="spinner-sm"></span> Atualizando disponibilidade...</p>
+        <p id="status-vagas" style="color: var(--primary); font-size: 0.9rem; display: flex; align-items: center; gap: 5px;"><span class="spinner-sm"></span> Atualizando disponibilidade de vagas...</p>
 
         <div class="agenda-grid">
             <!-- QUINTA 25/06 -->
@@ -163,7 +168,7 @@
 
         <div class="security-footer">
             <div class="safe-badge">🔒 Ambiente Seguro (LGPD)</div>
-            <p>Seus dados são criptografados e usados apenas para este atendimento de saúde.</p>
+            <p>Seus dados são protegidos e usados apenas para este atendimento de saúde.</p>
         </div>
     </form>
 </div>
@@ -171,17 +176,16 @@
 <div id="modalSucesso" class="modal-overlay">
     <div class="modal-content">
         <div style="background: var(--success); width: 60px; height: 60px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 20px;">✓</div>
-        <h2>Agendado com Sucesso!</h2>
-        <p style="color:#666; margin-bottom: 25px;">Sua vaga em Maringá está garantida.<br>Fique atento ao seu WhatsApp.</p>
-        <a id="btnAgenda" href="#" target="_blank" style="display: block; margin-bottom: 15px; text-decoration: none; color: var(--primary); font-weight: bold; border: 1px solid var(--primary); padding: 10px; border-radius: 8px;">📅 Salvar na Agenda</a>
-        <button onclick="window.location.reload()" style="background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%;">Fazer Novo Cadastro</button>
+        <h2>Garantido! ✓</h2>
+        <p style="color:#666; margin-bottom: 25px;">Seu cadastro para Maringá foi concluído.<br>Fique atento ao seu WhatsApp.</p>
+        <button onclick="window.location.reload()" style="background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%;">Novo Cadastro</button>
     </div>
 </div>
 
 <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbyAUjBHlG1PdFViaqTKr_yeEB2V569umYqkqb07jjoWyDDJlFT1fC5z1vCyXGkuVcjuug/exec'; 
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxOemd4mMqhFrSnG9XKwXCEWAUh7sHQ7SIT7UqkIm6JWsQAU_PZjrRz_j6IFJl5m1Yo/exec'; 
     
-    // Divisão de 550 vagas em 6 períodos
+    // Divisão das 550 vagas
     const limitesVagas = {
         'Quinta 25/06 - Manhã': 92, 'Quinta 25/06 - Tarde': 92,
         'Sexta 26/06 - Manhã': 92, 'Sexta 26/06 - Tarde': 92,
@@ -195,7 +199,7 @@
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        toast.innerHTML = `<strong>${type === 'error' ? 'Erro' : 'Sucesso'}</strong>: ${message}`;
+        toast.innerHTML = `<strong>${type === 'error' ? 'Atenção' : 'Sucesso'}</strong>: ${message}`;
         container.appendChild(toast);
         setTimeout(() => toast.remove(), 4000);
     }
@@ -206,7 +210,7 @@
         if (!opt.querySelector('input').disabled) opt.classList.add('selected');
     }
 
-    // Máscara Telefone (Espaçamento correto)
+    // Máscara Telefone (00) 00000-0000
     document.getElementById('whatsapp').addEventListener('input', function(e) {
         let v = e.target.value.replace(/\D/g, '');
         if (v.length > 11) v = v.slice(0, 11);
@@ -217,11 +221,17 @@
         e.target.value = v;
     });
 
-    // CPF e Idade
+    // CPF (Somente formato, se preenchido)
     document.getElementById('cpf').addEventListener('input', function(e) {
-        e.target.value = e.target.value.replace(/\D/g, '').replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length > 11) v = v.slice(0, 11);
+        v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+        e.target.value = v;
+        this.classList.remove('input-error');
+        document.getElementById('cpfError').style.display = 'none';
     });
 
+    // Idade (Mínimo 18 anos)
     document.getElementById('nascimento').addEventListener('change', function() {
         const nasc = new Date(this.value);
         const hoje = new Date();
@@ -229,7 +239,7 @@
         if (hoje.getMonth() < nasc.getMonth() || (hoje.getMonth() === nasc.getMonth() && hoje.getDate() < nasc.getDate())) idade--;
         document.getElementById('idade').value = idade;
         if(idade < 18) {
-            document.getElementById('msgIdade').innerText = "🚫 Mínimo de 18 anos.";
+            document.getElementById('msgIdade').innerText = "🚫 Somente para maiores de 18 anos.";
             document.getElementById('msgIdade').style.display = "block";
             btn.disabled = true;
         } else {
@@ -238,7 +248,7 @@
         }
     });
 
-    // Carregar Vagas
+    // Carregar Vagas do Servidor
     window.addEventListener('load', () => {
         fetch(scriptURL).then(res => res.json()).then(data => {
             document.getElementById('status-vagas').style.display = 'none';
@@ -258,33 +268,39 @@
                     el.innerHTML = `${c.t} • <b style="color:red">ESGOTADO</b>`;
                     card.querySelector('input').disabled = true;
                     card.style.opacity = '0.5';
+                    card.style.cursor = 'not-allowed';
                 } else {
-                    el.innerHTML = `${c.t} • <b style="color:var(--success)">${rest} vagas</b>`;
+                    const cor = rest > 15 ? 'var(--success)' : '#fd7e14';
+                    el.innerHTML = `${c.t} • <b style="color:${cor}">${rest} vagas</b>`;
                 }
             });
         }).catch(() => {
-            document.getElementById('status-vagas').innerHTML = "⚠️ Erro ao carregar vagas.";
+            document.getElementById('status-vagas').innerHTML = "⚠️ Erro ao atualizar vagas.";
+            document.querySelectorAll('.vagas .spinner-sm').forEach(s => s.remove());
         });
     });
 
+    // Envio do Form
     form.addEventListener('submit', e => {
         e.preventDefault();
+        if (document.getElementById('honeypot').value !== "") return;
+
         btn.disabled = true;
-        btn.innerHTML = 'Processando...';
+        btn.innerHTML = '<span class="spinner-sm" style="border-top-color: white;"></span> Gravando agendamento...';
 
         fetch(scriptURL, { method: 'POST', body: new FormData(form)}).then(r => r.json()).then(res => {
-            if (res.result === 'success') {
-                const sel = form.agendamento.value;
-                const dataEv = sel.includes('25/06') ? '20260625' : (sel.includes('26/06') ? '20260626' : '20260627');
-                const hI = sel.includes('Manhã') ? '080000' : '133000';
-                const linkG = `https://www.google.com/calendar/render?action=TEMPLATE&text=Projeto+Luz+e+Visão&dates=${dataEv}T${hI}/${dataEv}T120000&details=Local: Centro Comunitário Jardim Alvorada.`;
-                document.getElementById('btnAgenda').href = linkG;
+            if (res.result === 'error' && res.message === 'CPF_DUPLICADO') {
+                showToast("CPF já cadastrado para este evento.", "error");
+                document.getElementById('cpf').classList.add('input-error');
+                document.getElementById('cpfError').style.display = 'block';
+                btn.disabled = false; btn.innerHTML = 'Confirmar Agendamento Gratuito';
+            } else if (res.result === 'success') {
                 document.getElementById('modalSucesso').style.display = 'flex';
-            } else {
-                showToast("CPF já cadastrado.");
-                btn.disabled = false; btn.innerHTML = 'Confirmar Agendamento';
             }
-        }).catch(() => { showToast("Erro de conexão."); btn.disabled = false; });
+        }).catch(() => { 
+            showToast("Erro de conexão. Tente novamente."); 
+            btn.disabled = false; btn.innerHTML = 'Confirmar Agendamento Gratuito'; 
+        });
     });
 </script>
 
